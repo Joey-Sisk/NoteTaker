@@ -1,54 +1,83 @@
-// Dependencies
-// =============================================================
 const express = require("express");
-const { v4: uuidv4 } = require('uuid');
-const fs = require("fs");
-const dbJSON = require("./db/db.json");
+const apiRoutes = require("./routes/apiRoutes");
 const path = require("path");
+const dbJSON = require("./db/db.json");
+const store = require("./db/store");
+const fs = require("fs");
+const { v4: uuidv4 } = require('uuid');
 
-// Sets up the Express App
-// =============================================================
-const app = express();
+const app = express(); // sets up express and server port
 const PORT = process.env.PORT || 3000;
 
-// Sets up the Express app to handle data parsing
+app.use(express.json()); // connects express for data handling
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.static("./public"));
+app.use("/api", apiRoutes);
 
-
-
-// Routes
-// =============================================================
-
-// Basic route that sends the user first to the AJAX Page
-
-app.get("/", function(req, res) {
-  res.sendFile(path.join(__dirname, "./public/index.html"));
+app.get('/', (req, res) => { // sends user prebuilt html pages
+    res.sendFile(path.join(__dirname, './public/index.html'));
 });
 
-app.get("/notes", function(req, res) {
-  res.sendFile(path.join(__dirname, "./public/notes.html"));
+app.get('/notes', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/notes.html'));
 });
 
-app.get("/note", function(req, res) {
+app.get("/note", (req, res) => {
   res.json(dbJSON);
 });
 
-app.post("/note", function(req, res) {
-  // Validate request body
-  if(!req.body.title) {
+// app.get("/notes", (req, res) => {
+//   store
+//     .getNotes()
+//     .then((notes) => {
+//       res.json(notes);
+//     })
+//     .catch((err) => {
+//       // 500 is a non-specific server error
+//       res.status(500).json(err);
+//     });
+// });
+
+// app.post("/api/notes", function(req, res) {
+//   // Validate request body
+//   if(!req.body.title) {
+//     return res.json({error: "Missing required title"});
+//   }
+
+//   // Copy request body and generate ID
+//   const note = {...req.body, id: uuidv4()}
+
+//   // Push note to dbJSON array - saves data in memory
+//   dbJSON.push(note);
+
+//   // Saves data to file by persisting in memory variable dbJSON to db.json file.
+//   fs.writeFile(path.join(__dirname, "./db/db.json"), JSON.stringify(dbJSON), (err) => {
+//     if (err) {
+//       return res.json({error: "Error writing to file"});
+//     }
+
+//     return res.json(note);
+//   });
+// });
+
+// app.delete('/api/notes/:id', function (req, res){
+//   const noteId = dbJson.findIndex(item => {item.id == req.params.id});  
+//   console.log(noteId);
+//   dbJson.splice(noteId,1);
+//   res.json(true)
+// });
+
+app.post("/note", function(req, res) { 
+  
+  if(!req.body.title) { // Validate request body
     return res.json({error: "Missing required title"});
   }
-
-  // Copy request body and generate ID
-  const note = {...req.body, id: uuidv4()}
-
-  // Push note to dbJSON array - saves data in memory
-  dbJSON.push(note);
+  
+  const note = {...req.body, id: uuidv4()} // Copy request body and generate ID
+  
+  dbJSON.push(note); // Push note to dbJSON array - saves data in memory
 
   // Saves data to file by persisting in memory variable dbJSON to db.json file.
-  // This is needed because when we turn off server we loose all memory data like pbJSON variable.
-  // Saving to file allows us to read previous notes (before server was shutdown) from file.
   fs.writeFile(path.join(__dirname, "db.json"), JSON.stringify(dbJSON), (err) => {
     if (err) {
       return res.json({error: "Error writing to file"});
@@ -58,12 +87,10 @@ app.post("/note", function(req, res) {
   });
 });
 
-app.get("*", function(req, res) {
+app.get("*", function(req, res) { // catch all sends to homepage
   res.send("Sending you the homepage");
 });
 
-// Starts the server to begin listening
-// =============================================================
-app.listen(PORT, function() {
+app.listen(PORT, function() { // starts the local server
   console.log("App listening on PORT " + PORT);
 });
