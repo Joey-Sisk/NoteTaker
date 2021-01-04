@@ -19,7 +19,7 @@ This node/express based javascript program is designed to make it easy for a use
 
 ## Screenshot
 
-![Finished Page](./images/screenshot.jpg)
+![Finished Page](./images/screenshot.png)
 
 ## Link
 
