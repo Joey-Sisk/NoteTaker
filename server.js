@@ -25,8 +25,7 @@ app.get("/note", (req, res) => {
 });
 
 app.get("/api/notes", (req, res) => {
-  const notes = fs.readFileSync(path.join(__dirname, "./public/notes.html"));
-  return res.json(notes);
+  return res.json(dbJSON);
 });
 
 app.post("/api/notes", function(req, res) {
@@ -62,7 +61,7 @@ app.delete('/api/notes/:id', function (req, res){
       return res.json({error: "Error writing to file"});
     }
 
-    return res.json(note);
+    return res.json(noteId);
   });
 });
 
