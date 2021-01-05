@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-const dbJSON = require("./db/db.json");
+let dbJSON = require("./db/db.json");
 const fs = require("fs");
 const { v4: uuidv4 } = require('uuid');
 
@@ -33,7 +33,6 @@ app.post("/api/notes", function(req, res) {
   if(!req.body.title) {
     return res.json({error: "Missing required title"});
   }
-
   // Copy request body and generate ID
   const note = {...req.body, id: uuidv4()}
 
@@ -45,23 +44,22 @@ app.post("/api/notes", function(req, res) {
     if (err) {
       return res.json({error: "Error writing to file"});
     }
-
     return res.json(note);
   });
 });
 
-app.delete('/api/notes/:id', function (req, res){
-  const noteId = dbJSON.findIndex(item => {item.id == req.params.id});  
-  console.log(noteId);
+app.delete('/api/notes/:id', function (req, res){ // delete the selected note
+  const noteFinder = req.params.id;
 
-  dbJSON.splice(noteId,1);
+  const fixedNote = dbJSON.filter(note => note.id !== noteFinder);
+
+  dbJSON = fixedNote;
 
   fs.writeFile(path.join(__dirname, "./db/db.json"), JSON.stringify(dbJSON), (err) => {
     if (err) {
       return res.json({error: "Error writing to file"});
     }
-
-    return res.json(noteId);
+    return res.json(fixedNote);
   });
 });
 
