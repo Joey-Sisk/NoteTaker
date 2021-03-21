@@ -3,7 +3,7 @@
 
 ## Description
 
-This node/express based javascript program is designed to make it easy for a user to take and refrence notes for future use and delete them once they are no longer needed. The program runs in browser and is designed to be intuitive and user friendly. Once the user has entered a title and contents for their notes a save button will apear in the top right corner. The user will see all their current notes in the left sidebar and can delete unneeded notes by clicking on the trash can next to the title of their note.
+This node/express based javascript program is designed to make it easy for a user to take and reference notes for future use and delete them once they are no longer needed. The program runs in browser and is designed to be intuitive and user friendly. Once the user has entered a title and contents for their notes a save button will appear in the top right corner. The user will see all their current notes in the left sidebar and can delete unneeded notes by clicking on the trash can next to the title of their note.
 
 ## Table of Contents 
 
